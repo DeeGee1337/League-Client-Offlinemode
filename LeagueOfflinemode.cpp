@@ -10,7 +10,6 @@
 #include <vector>
 #include <algorithm>
 
-
 #pragma comment(lib, "iphlpapi.lib")
 #pragma comment(lib, "ws2_32.lib")
 #pragma warning(disable : 4996)
@@ -18,10 +17,9 @@
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
 
-
-bool sortbysec(const std::pair<std::string, int>& a, const std::pair<std::string, int>& b)
+bool sortbysecdesc(const std::pair<std::string, int>& a, const std::pair<std::string, int>& b)
 {
-    return (a.second < b.second);
+    return a.second > b.second;
 }
 
 DWORD MyGetProcessId(LPCTSTR ProcessName)
@@ -100,6 +98,8 @@ int main()
     if (pid != 0)
     {
         std::cout << "Grabbing Process ID successful: " << pid << std::endl;
+        std::cout << "Login to your Account and ";
+        system("pause");
     }
 
     int port_test = 0;
@@ -245,13 +245,12 @@ int main()
     }
 
     int portme = 0;
-    int final_port = 0;
 
-    for (int j = 0; i < remote_tcp.size(); j++)
+    for (int j = 0; j < remote_tcp.size(); j++)
     {
         std::cout << "OUTPUT PAIR SECOND: " << remote_tcp[j].second << " VEL PORTME: " << portme << std::endl;
         portme = remote_tcp[j].second;
-        std::sort(remote_tcp.begin(), remote_tcp.end(), sortbysec);
+        std::sort(remote_tcp.begin(), remote_tcp.end(), sortbysecdesc);
     }
 
     for (auto entrys : remote_tcp)
@@ -259,7 +258,7 @@ int main()
         std::cout << "TCP IP Entries Sorted " << entrys.first << ":" << entrys.second << std::endl;
     }
 
-    std::cout << "Final RIOT Chatserver IP: " << remote_tcp[remote_tcp.size() - 1].first << std::endl;
+    std::cout << "Final RIOT Chatserver IP: " << remote_tcp[0].first << std::endl;
     std::cout << "-----------------------------------------------------------------------------------\n";
     std::cout << "[1] Disable Leaguechat \n";
     std::cout << "[2] Enable Leaguechat \n";
@@ -272,7 +271,7 @@ int main()
     while (u != 404)
     {
         std::cin >> u;
-        exit = execute_batch(u, remote_tcp[remote_tcp.size() - 1].first);
+        exit = execute_batch(u, remote_tcp[0].first);
 
         if (exit == false)
             u = 404;
